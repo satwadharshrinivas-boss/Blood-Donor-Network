@@ -1,0 +1,411 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Blood Donor Network</title>
+
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            background-color: #f5f5f5;
+            padding: 40px;
+        }
+
+        h1 {
+            color: #b30000;
+        }
+
+        button {
+            padding: 15px 25px;
+            margin: 10px;
+            border: none;
+            border-radius: 8px;
+            background-color: #d00000;
+            color: white;
+            font-size: 16px;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background-color: #900000;
+        }
+
+        .box {
+            background-color: white;
+            padding: 25px;
+            margin: 30px auto;
+            max-width: 500px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px #ccc;
+        }
+
+        input, select {
+            padding: 12px;
+            margin: 8px;
+            width: 80%;
+            font-size: 16px;
+        }
+
+        .hidden {
+            display: none;
+        }
+    </style>
+</head>
+
+<body>
+
+    <h1>🩸 Community-Centric Blood Donor & Emergency Health Network</h1>
+
+    <div class="box">
+
+        <h2>Welcome</h2>
+
+        <p>
+            This platform helps people find blood donors quickly
+            during emergency situations.
+        </p>
+
+        <h2>What do you need?</h2>
+
+        <button onclick="findDonor()">
+            🔎 Find Blood Donor
+        </button>
+
+        <button onclick="registerDonor()">
+            🩸 Register as Donor
+        </button>
+
+        <button onclick="emergencyRequest()">
+            🚨 Emergency Request
+        </button>
+
+    </div>
+
+
+    <!-- FIND DONOR -->
+
+    <div id="findDonor" class="box hidden">
+
+        <h2>🔎 Find Blood Donor</h2>
+
+        <p>Select required blood group:</p>
+
+        <select id="searchBloodGroup">
+            <option value="">Select Blood Group</option>
+            <option>A+</option>
+            <option>A-</option>
+            <option>B+</option>
+            <option>B-</option>
+            <option>O+</option>
+            <option>O-</option>
+            <option>AB+</option>
+            <option>AB-</option>
+        </select>
+
+        <br>
+
+        <button onclick="searchDonor()">
+            Search Donor
+        </button>
+
+        <div id="donorResults"></div>
+
+    </div>
+
+
+    <!-- REGISTER DONOR -->
+
+    <div id="registerDonor" class="box hidden">
+
+        <h2>🩸 Register as a Donor</h2>
+
+        <input
+            type="text"
+            id="donorName"
+            placeholder="Full Name"
+        >
+
+        <input
+            type="text"
+            id="donorMobile"
+            placeholder="Mobile Number"
+        >
+
+        <select id="donorBloodGroup">
+
+            <option value="">Select Blood Group</option>
+
+            <option>A+</option>
+            <option>A-</option>
+            <option>B+</option>
+            <option>B-</option>
+            <option>O+</option>
+            <option>O-</option>
+            <option>AB+</option>
+            <option>AB-</option>
+
+        </select>
+
+        <input
+    type="text"
+    id="donorLocation"
+    placeholder="📍 City / Area"
+>
+        <select id="donorAvailability">
+
+            <option value="">Availability</option>
+
+            <option>Available</option>
+            <option>Not Available</option>
+
+        </select>
+
+        <br>
+
+        <button onclick="saveDonor()">
+            Register Donor
+        </button>
+
+    </div>
+
+
+    <!-- EMERGENCY REQUEST -->
+
+    <div id="emergencyRequest" class="box hidden">
+
+        <h2>🚨 Emergency Blood Request</h2>
+
+        <input
+            type="text"
+            placeholder="Patient Name"
+        >
+
+        <input
+            type="text"
+            placeholder="Hospital Name"
+        >
+
+        <select>
+
+            <option>Select Required Blood Group</option>
+
+            <option>A+</option>
+            <option>A-</option>
+            <option>B+</option>
+            <option>B-</option>
+            <option>O+</option>
+            <option>O-</option>
+            <option>AB+</option>
+            <option>AB-</option>
+
+        </select>
+
+        <input
+            type="text"
+            placeholder="Contact Number"
+        >
+
+        <br>
+
+        <button onclick="alert('Emergency request submitted!')">
+            Send Emergency Request
+        </button>
+
+    </div>
+
+
+    <script>
+
+        // Hide all sections
+
+        function hideAll() {
+
+            document
+                .getElementById("findDonor")
+                .classList.add("hidden");
+
+            document
+                .getElementById("registerDonor")
+                .classList.add("hidden");
+
+            document
+                .getElementById("emergencyRequest")
+                .classList.add("hidden");
+
+        }
+
+
+        // Open Find Donor
+
+        function findDonor() {
+
+            hideAll();
+
+            document
+                .getElementById("findDonor")
+                .classList.remove("hidden");
+
+        }
+
+
+        // Open Register Donor
+
+        function registerDonor() {
+
+            hideAll();
+
+            document
+                .getElementById("registerDonor")
+                .classList.remove("hidden");
+
+        }
+
+
+        // Open Emergency Request
+
+        function emergencyRequest() {
+
+            hideAll();
+
+            document
+                .getElementById("emergencyRequest")
+                .classList.remove("hidden");
+
+        }
+
+
+        // SAVE DONOR
+
+async function saveDonor() {
+    const name = document.getElementById("donorName").value.trim();
+    const mobile = document.getElementById("donorMobile").value.trim();
+    const bloodGroup = document.getElementById("donorBloodGroup").value;
+    const location = document.getElementById("donorLocation").value.trim();
+    const availability = document.getElementById("donorAvailability").value;
+
+    if (!name || !mobile || !bloodGroup || !location || !availability) {
+        alert("Please fill all details.");
+        return;
+    }
+
+    try {
+        const response = await fetch("/register", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({
+                name: name,
+                mobile: mobile,
+                blood_group: bloodGroup,
+                location: location,
+                availability: availability
+            })
+        });
+
+        const result = await response.json();
+
+        if (!response.ok) {
+            alert(result.error || "Registration failed.");
+            return;
+        }
+
+        alert("✅ Donor registered successfully!");
+
+        document.getElementById("donorName").value = "";
+        document.getElementById("donorMobile").value = "";
+        document.getElementById("donorBloodGroup").value = "";
+        document.getElementById("donorLocation").value = "";
+        document.getElementById("donorAvailability").value = "";
+
+    } catch (error) {
+        alert("Unable to connect to the server. Please try again.");
+        console.error(error);
+    }
+}
+        // SEARCH DONOR
+
+        async function searchDonor() {
+
+    const bloodGroup =
+        document.getElementById("searchBloodGroup").value;
+
+    if (bloodGroup === "") {
+        alert("Please select blood group.");
+        return;
+    }
+
+    try {
+
+        const response = await fetch(
+            "/search?blood_group=" + encodeURIComponent(bloodGroup)
+        );
+
+        const result = await response.json();
+
+        const resultBox =
+            document.getElementById("donorResults");
+
+        if (result.donors.length === 0) {
+
+            resultBox.innerHTML =
+                "<p>❌ No available donor found.</p>";
+
+            return;
+        }
+
+        resultBox.innerHTML =
+            "<h3>Available Donors</h3>";
+
+        result.donors.forEach(function(donor) {
+
+            const whatsappNumber =
+                donor.mobile.replace(/\D/g, "");
+
+            resultBox.innerHTML +=
+
+                "<div class='box'>" +
+
+                "<h3>🩸 " + donor.name + "</h3>" +
+
+                "<p><b>Blood Group:</b> "
+                + donor.blood_group +
+                "</p>" +
+
+                "<p><b>📍 Location:</b> "
+                + donor.location +
+                "</p>" +
+
+                "<p><b>📱 Mobile:</b> "
+                + donor.mobile +
+                "</p>" +
+
+                "<p><b>Status:</b> 🟢 "
+                + donor.availability +
+                "</p>" +
+
+                "<a href='tel:" + donor.mobile + "'>" +
+                "<button>📞 Call Donor</button>" +
+                "</a>" +
+
+                "<a href='https://wa.me/91"
+                + whatsappNumber +
+                "' target='_blank'>" +
+                "<button>🟢 WhatsApp Donor</button>" +
+                "</a>" +
+
+                "</div>";
+        });
+
+    } catch (error) {
+
+        console.error(error);
+
+        alert("Unable to connect to the server.");
+    }
+}
+
+    </script>
+
+</body>
+</html>
